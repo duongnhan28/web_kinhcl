@@ -42,7 +42,10 @@ export default function AdminProductsPage() {
         }
     };
 
-    const products = data?.filter((item: any) => item.name.toLowerCase().includes(search.toLowerCase())) ?? [];
+    const products = data?.filter((item: any) =>
+        item.sku?.toLowerCase().includes(search.toLowerCase()) ||
+        item.name.toLowerCase().includes(search.toLowerCase())
+    ) ?? [];
 
     return (
         <AdminShell>
@@ -50,13 +53,10 @@ export default function AdminProductsPage() {
                 <div className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-soft">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div>
-                            <p className="text-sm uppercase tracking-[0.3em] text-slate-500">Quản lý sản phẩm</p>
-                            <h1 className="text-3xl font-semibold text-slate-950">Kính cường lực</h1>
+                            <p className="text-xs font-bold uppercase tracking-[0.3em] text-slate-400 mb-1">Hệ thống quản trị</p>
+                            <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">Kính cường lực</h1>
                         </div>
                         <div className="flex items-center gap-3">
-                            <button onClick={() => refetch()} className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
-                                Làm mới
-                            </button>
                             <Link href="/admin/products/new" className="rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800">
                                 + Thêm sản phẩm
                             </Link>
@@ -71,10 +71,7 @@ export default function AdminProductsPage() {
                         <table className="min-w-full divide-y divide-slate-200 text-left text-sm">
                             <thead className="bg-slate-50 text-slate-700">
                                 <tr>
-                                    <th className="px-6 py-4">Tên sản phẩm</th>
-                                    <th className="px-6 py-4">Thương hiệu</th>
-                                    <th className="px-6 py-4">Giá bán</th>
-                                    <th className="px-6 py-4">Tồn kho</th>
+                                    <th className="px-6 py-4">Mã SKU</th>
                                     <th className="px-6 py-4 text-right">Hành động</th>
                                 </tr>
                             </thead>
@@ -92,17 +89,10 @@ export default function AdminProductsPage() {
                                                 <div className="flex items-center gap-3">
                                                     <div className="h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-slate-200">
                                                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                        <img src={product.thumbnail} alt={product.name} className="h-full w-full object-cover" />
+                                                        <img src={product.thumbnail || 'https://placehold.co/100x100/f8fafc/94a3b8?text=KINH'} alt="Kính" className="h-full w-full object-cover" />
                                                     </div>
-                                                    <span className="font-medium text-slate-900 line-clamp-2">{product.name}</span>
+                                                    <span className="font-bold text-slate-900">{product.sku || product.name}</span>
                                                 </div>
-                                            </td>
-                                            <td className="px-6 py-4 text-slate-600">{product.brand}</td>
-                                            <td className="px-6 py-4 font-medium text-emerald-600">{product.price.toLocaleString()}₫</td>
-                                            <td className="px-6 py-4 text-slate-600">
-                                                <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${product.stock > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                                                    {product.stock}
-                                                </span>
                                             </td>
                                             <td className="px-6 py-4 text-right space-x-3">
                                                 <Link href={`/admin/products/${product.id}/edit`} className="text-blue-600 hover:underline font-medium">Sửa</Link>

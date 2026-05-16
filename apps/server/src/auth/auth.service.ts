@@ -37,12 +37,12 @@ export class AuthService {
         return { accessToken, refreshToken };
     }
 
-    async refreshTokens(payload: { sub: string; username: string }) {
+    async refreshTokens(payload: { id: string; username: string }) {
         if (!payload) {
             throw new UnauthorizedException('Refresh token invalid');
         }
 
-        const tokenPayload = { username: payload.username, sub: payload.sub };
+        const tokenPayload = { username: payload.username, sub: payload.id };
         const accessToken = this.jwtService.sign(tokenPayload, { expiresIn: ACCESS_TOKEN_EXPIRES_IN });
         const refreshToken = this.jwtService.sign(tokenPayload, {
             secret: this.config.get<string>('JWT_REFRESH_SECRET'),
@@ -57,6 +57,22 @@ export class AuthService {
             where: { id: userId },
             select: { id: true, username: true, createdAt: true }
         });
+    }
+
+    async changePassword(userId: string, oldPass: string, newPass: string) {
+        const admin = await this.prisma.admin.findUnique({ where: { id: userId } });
+        if (!admin) throw new UnauthorizedException('Admin not found');
+
+        const isValid = await bcrypt.compare(oldPass, admin.passwordHash);
+        if (!isValid) throw new UnauthorizedException('Mật khẩu cũ không chính xác');
+
+        const passwordHash = await bcrypt.hash(newPass, 10);
+        await this.prisma.admin.update({
+            where: { id: userId },
+            data: { passwordHash }
+        });
+
+        return { message: 'Đổi mật khẩu thành công' };
     }
 
     getRefreshCookie(token: string) {

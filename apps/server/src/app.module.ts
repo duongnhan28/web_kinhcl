@@ -4,7 +4,7 @@ import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { ProductsModule } from './products/products.module';
-import { CategoriesModule } from './categories/categories.module';
+
 import { UploadModule } from './upload/upload.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
@@ -15,7 +15,7 @@ import { TransformInterceptor } from './common/interceptors/transform.intercepto
         PrismaModule,
         AuthModule,
         ProductsModule,
-        CategoriesModule,
+
         UploadModule
     ],
     providers: [

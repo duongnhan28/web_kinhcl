@@ -27,7 +27,13 @@ export class AuthController {
 
     @UseGuards(JwtAuthGuard)
     @Get('profile')
-    async profile(@User('sub') adminId: string) {
+    async profile(@User('id') adminId: string) {
         return this.authService.getProfile(adminId);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post('change-password')
+    async changePassword(@User('id') adminId: string, @Body() body: any) {
+        return this.authService.changePassword(adminId, body.oldPassword, body.newPassword);
     }
 }

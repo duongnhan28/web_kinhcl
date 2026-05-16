@@ -2,6 +2,10 @@ import { IsArray, IsBoolean, IsInt, IsNotEmpty, IsOptional, IsPositive, IsString
 
 export class CreateProductDto {
     @IsString()
+    @IsOptional()
+    sku?: string;
+
+    @IsString()
     @IsNotEmpty()
     name: string;
 
@@ -17,9 +21,6 @@ export class CreateProductDto {
     @Min(0)
     price: number;
 
-    @IsString()
-    @IsNotEmpty()
-    brand: string;
 
     @IsString()
     @IsNotEmpty()
@@ -29,8 +30,6 @@ export class CreateProductDto {
     @Min(0)
     stock: number;
 
-    @IsUUID()
-    categoryId: string;
 
     @IsString()
     @IsNotEmpty()

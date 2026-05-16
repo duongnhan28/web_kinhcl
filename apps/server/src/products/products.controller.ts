@@ -14,14 +14,9 @@ export class ProductsController {
         return this.productsService.findAll(query);
     }
 
-    @Get('filters')
-    async getFilters() {
-        return this.productsService.getFilters();
-    }
-
-    @Get(':slug')
-    async findOne(@Param('slug') slug: string) {
-        return this.productsService.findBySlug(slug);
+    @Get(':id')
+    async findOne(@Param('id') id: string) {
+        return this.productsService.findById(id);
     }
 
     @UseGuards(JwtAuthGuard)

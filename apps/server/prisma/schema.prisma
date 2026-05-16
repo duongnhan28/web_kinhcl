@@ -14,24 +14,17 @@ model Admin {
   createdAt    DateTime @default(now())
 }
 
-model Category {
-  id       String    @id @default(uuid())
-  name     String
-  slug     String    @unique
-  products Product[]
-}
+
 
 model Product {
   id          String         @id @default(uuid())
+  sku         String         @default("")
   name        String
   slug        String         @unique
   description String
   price       Int
-  brand       String
   glassType   String
   stock       Int
-  category    Category       @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  categoryId  String
   thumbnail   String
   isFeatured  Boolean        @default(false)
   createdAt   DateTime       @default(now())
