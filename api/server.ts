@@ -1,11 +1,10 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from '../src/app.module';
+import { AppModule } from '../apps/server/src/app.module';
 import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import { json, urlencoded } from 'express';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { join } from 'path';
 import { configure as serverlessExpress } from '@vendia/serverless-express';
 
 let cachedServer: any;
