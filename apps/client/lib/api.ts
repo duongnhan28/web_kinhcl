@@ -1,10 +1,9 @@
 import axios from 'axios';
 
-const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL ?? 
-    (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:4000');
+const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL ?? '';
 
 export const apiClient = axios.create({
-    baseURL: `${baseURL}/api`,
+    baseURL: baseURL ? `${baseURL}/api` : '/api',
     withCredentials: true,
     headers: {
         'Content-Type': 'application/json',
@@ -34,8 +33,7 @@ apiClient.interceptors.response.use(
         ) {
             originalRequest._retry = true;
             try {
-                const currentBaseURL = process.env.NEXT_PUBLIC_API_BASE_URL ?? 
-                    (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:4000');
+                const currentBaseURL = process.env.NEXT_PUBLIC_API_BASE_URL ?? '';
                 const response = await axios.post(`${currentBaseURL}/api/auth/refresh`, {}, { withCredentials: true });
                 const newAccessToken = response.data.data.accessToken;
                 localStorage.setItem('accessToken', newAccessToken);
@@ -54,19 +52,22 @@ apiClient.interceptors.response.use(
 );
 
 export async function fetchPublicProducts(query = '') {
-    const response = await fetch(`${baseURL}/api/products${query}`);
+    const url = baseURL ? `${baseURL}/api/products${query}` : `/api/products${query}`;
+    const response = await fetch(url);
     const data = await response.json();
     return data.data;
 }
 
 export async function fetchProductBySlug(slug: string) {
-    const response = await fetch(`${baseURL}/api/products/${slug}`);
+    const url = baseURL ? `${baseURL}/api/products/${slug}` : `/api/products/${slug}`;
+    const response = await fetch(url);
     const data = await response.json();
     return data.data;
 }
 
 export async function fetchCategories() {
-    const response = await fetch(`${baseURL}/api/categories`);
+    const url = baseURL ? `${baseURL}/api/categories` : `/api/categories`;
+    const response = await fetch(url);
     const data = await response.json();
     return data.data;
 }
