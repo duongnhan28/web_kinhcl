@@ -31,7 +31,10 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "strictNullChecks": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
   "include": [
     "**/*.ts",
