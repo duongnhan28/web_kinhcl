@@ -1,0 +1,17 @@
+{
+    "files": [],
+    "references": [
+        {
+            "path": "apps/client"
+        },
+        {
+            "path": "apps/server"
+        },
+        {
+            "path": "packages/ui"
+        },
+        {
+            "path": "packages/shared"
+        }
+    ]
+}

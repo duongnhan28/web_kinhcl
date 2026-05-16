@@ -1,0 +1,26 @@
+import { AdminShell } from '../../../../components/admin-shell';
+import { ProductForm } from '../../../../components/product-form';
+import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
+
+export default function NewProductPage() {
+    return (
+        <AdminShell>
+            <div className="space-y-8">
+                <div className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-soft">
+                    <div className="mb-8 flex items-center gap-4">
+                        <Link href="/admin/products" className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-500 transition hover:bg-slate-50 hover:text-slate-900">
+                            <ArrowLeft className="h-5 w-5" />
+                        </Link>
+                        <div>
+                            <p className="text-sm uppercase tracking-[0.3em] text-slate-500">Quản lý sản phẩm</p>
+                            <h1 className="text-3xl font-semibold text-slate-950">Thêm mới</h1>
+                        </div>
+                    </div>
+
+                    <ProductForm isEdit={false} />
+                </div>
+            </div>
+        </AdminShell>
+    );
+}

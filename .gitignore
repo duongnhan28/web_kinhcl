@@ -1,0 +1,16 @@
+node_modules
+.pnp*
+**/node_modules
+**/.turbo
+.DS_Store
+.env
+.env.*
+/dist
+/build
+/.next
+/out
+coverage
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-lock.yaml

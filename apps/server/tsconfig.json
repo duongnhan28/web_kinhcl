@@ -1,0 +1,33 @@
+﻿{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "module": "CommonJS",
+        "target": "ES2020",
+        "lib": [
+            "ES2020"
+        ],
+        "rootDir": "src",
+        "outDir": "dist",
+        "strict": true,
+        "strictPropertyInitialization": false,
+        "noImplicitAny": true,
+        "skipLibCheck": true,
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "moduleResolution": "node",
+        "types": [
+            "node",
+            "express",
+            "multer"
+        ]
+    },
+    "include": [
+        "src"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
+}
