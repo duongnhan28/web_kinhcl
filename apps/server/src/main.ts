@@ -8,14 +8,10 @@ import rateLimit from 'express-rate-limit';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 
-import { configure as serverlessExpress } from '@vendia/serverless-express';
-
-let cachedServer: any;
-
 async function bootstrap() {
     const app = await NestFactory.create<NestExpressApplication>(AppModule, {
         cors: {
-            origin: true, // Cho phép tất cả origin ở môi trường dev/prod
+            origin: true,
             credentials: true
         }
     });
@@ -32,7 +28,7 @@ async function bootstrap() {
     app.use(
         rateLimit({
             windowMs: 60 * 1000,
-            max: 200, // Tăng giới hạn cho môi trường production
+            max: 200,
             legacyHeaders: false
         } as any)
     );
@@ -45,24 +41,9 @@ async function bootstrap() {
         })
     );
 
-    if (process.env.NODE_ENV === 'production') {
-        await app.init();
-        const expressApp = app.getHttpAdapter().getInstance();
-        return serverlessExpress({ app: expressApp });
-    }
-
     const port = process.env.PORT || 4000;
     await app.listen(port);
     console.log(`Server running on http://localhost:${port}/api`);
 }
 
-export const handler = async (req: any, res: any) => {
-    if (!cachedServer) {
-        cachedServer = await bootstrap();
-    }
-    return cachedServer(req, res);
-};
-
-if (process.env.NODE_ENV !== 'production') {
-    bootstrap();
-}
+bootstrap();

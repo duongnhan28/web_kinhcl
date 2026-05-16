@@ -2,9 +2,6 @@
     "name": "kinh-top-monorepo",
     "private": true,
     "packageManager": "pnpm@9.15.2",
-    "engines": {
-        "node": ">=20.x"
-    },
     "workspaces": [
         "apps/*",
         "packages/*"
