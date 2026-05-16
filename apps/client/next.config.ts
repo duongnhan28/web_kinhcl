@@ -26,6 +26,7 @@ const nextConfig: NextConfig = {
         ]
     },
     reactStrictMode: true,
+    output: 'standalone',
     experimental: {
         typedRoutes: true
     }
