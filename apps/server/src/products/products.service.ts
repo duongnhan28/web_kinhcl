@@ -13,10 +13,10 @@ export class ProductsService {
         if (query.glassType) where.glassType = query.glassType;
         if (query.search)
             where.OR = [
-                { sku: { contains: query.search } },
-                { name: { contains: query.search } },
-                { description: { contains: query.search } },
-                { models: { some: { modelName: { contains: query.search } } } }
+                { sku: { contains: query.search, mode: 'insensitive' } },
+                { name: { contains: query.search, mode: 'insensitive' } },
+                { description: { contains: query.search, mode: 'insensitive' } },
+                { models: { some: { modelName: { contains: query.search, mode: 'insensitive' } } } }
             ];
 
         const orderBy = query.sort === 'price_desc'
