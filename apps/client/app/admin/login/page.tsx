@@ -21,7 +21,7 @@ export default function AdminLoginPage() {
         try {
             const result = await loginAdmin(username, password);
             setToken(result.accessToken);
-            router.push('/admin/dashboard');
+            router.push('/admin/products');
         } catch (err) {
             setError('Đăng nhập không thành công. Vui lòng kiểm tra lại.');
         } finally {

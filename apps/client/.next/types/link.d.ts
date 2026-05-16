@@ -33,15 +33,12 @@ declare namespace __next_route_internal_types__ {
 
   type StaticRoutes = 
     | `/`
-    | `/admin/categories`
-    | `/admin/dashboard`
+    | `/admin/change-password`
     | `/admin/login`
     | `/admin/products`
     | `/admin/products/new`
-    | `/products`
   type DynamicRoutes<T extends string = string> = 
     | `/admin/products/${SafeSlug<T>}/edit`
-    | `/products/${SafeSlug<T>}`
 
   type RouteImpl<T> = 
     | StaticRoutes

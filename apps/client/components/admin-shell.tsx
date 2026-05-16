@@ -34,8 +34,8 @@ export function AdminShell({ children }: AdminShellProps) {
             <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 px-6 py-4 backdrop-blur-sm">
                 <div className="mx-auto flex max-w-7xl flex-col gap-4 md:flex-row md:items-center md:justify-between">
                     <div className="flex items-center justify-between">
-                        <Link href="/admin/dashboard" className="text-lg font-bold tracking-tight text-slate-950 shrink-0">
-                            KINH TOP Admin
+                        <Link href="/" className="flex items-center gap-2">
+                            <img src="/logo.jpg" alt="Oufeidun Logo" className="h-9 w-auto rounded-lg" />
                         </Link>
                         <div className="flex items-center gap-2 md:hidden">
                             <Link href="/" target="_blank" className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition">
@@ -47,15 +47,14 @@ export function AdminShell({ children }: AdminShellProps) {
                         </div>
                     </div>
                     <div className="flex items-center md:gap-6">
-                        <nav className="flex w-full overflow-x-auto gap-2 text-sm text-slate-600 pb-1 md:pb-0 md:w-auto scrollbar-hide">
-                            <Link href="/admin/dashboard" className="whitespace-nowrap rounded-2xl border border-slate-200 px-4 py-2 font-medium hover:bg-slate-100 transition">Dashboard</Link>
-                            <Link href="/admin/products" className="whitespace-nowrap rounded-2xl border border-slate-200 px-4 py-2 font-medium hover:bg-slate-100 transition">Sản phẩm</Link>
-                            <Link href="/admin/categories" className="whitespace-nowrap rounded-2xl border border-slate-200 px-4 py-2 font-medium hover:bg-slate-100 transition">Dòng máy</Link>
-                        </nav>
+
                         <div className="hidden items-center gap-3 md:flex">
                             <div className="h-6 w-px bg-slate-200" />
                             <Link href="/" target="_blank" className="rounded-2xl bg-slate-900 text-white px-5 py-2.5 text-sm font-semibold hover:bg-slate-800 transition shadow-sm">
                                 Xem Website
+                            </Link>
+                             <Link href="/admin/change-password" title="Đổi mật khẩu" className="rounded-2xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">
+                                Đổi mật khẩu
                             </Link>
                             <button onClick={handleLogout} className="rounded-2xl bg-red-50 text-red-600 px-5 py-2.5 text-sm font-semibold hover:bg-red-100 transition">
                                 Đăng xuất

@@ -13,8 +13,8 @@ export default function NewProductPage() {
                             <ArrowLeft className="h-5 w-5" />
                         </Link>
                         <div>
-                            <p className="text-sm uppercase tracking-[0.3em] text-slate-500">Quản lý sản phẩm</p>
-                            <h1 className="text-3xl font-semibold text-slate-950">Thêm mới</h1>
+                            <p className="text-xs font-bold uppercase tracking-[0.3em] text-slate-400 mb-1">Hệ thống quản trị</p>
+                            <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">Thêm mới</h1>
                         </div>
                     </div>
 

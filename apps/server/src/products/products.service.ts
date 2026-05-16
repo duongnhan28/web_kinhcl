@@ -10,14 +10,13 @@ export class ProductsService {
 
     async findAll(query: QueryProductsDto) {
         const where: any = {};
-        if (query.brand) where.brand = query.brand;
         if (query.glassType) where.glassType = query.glassType;
-        if (query.categoryId) where.categoryId = query.categoryId;
         if (query.search)
             where.OR = [
+                { sku: { contains: query.search, mode: 'insensitive' } },
                 { name: { contains: query.search, mode: 'insensitive' } },
                 { description: { contains: query.search, mode: 'insensitive' } },
-                { brand: { contains: query.search, mode: 'insensitive' } }
+                { models: { some: { modelName: { contains: query.search, mode: 'insensitive' } } } }
             ];
 
         const orderBy = query.sort === 'price_desc'
@@ -36,7 +35,7 @@ export class ProductsService {
                 orderBy,
                 take: pageSize,
                 skip,
-                include: { images: true, category: true, models: true }
+                include: { images: true, models: true }
             }),
             this.prisma.product.count({ where })
         ]);
@@ -44,10 +43,10 @@ export class ProductsService {
         return { items, total, page, pageSize };
     }
 
-    async findBySlug(slug: string) {
+    async findById(id: string) {
         return this.prisma.product.findUnique({
-            where: { slug },
-            include: { images: true, category: true, models: true }
+            where: { id },
+            include: { images: true, models: true }
         });
     }
 
@@ -55,7 +54,7 @@ export class ProductsService {
         const product = await this.prisma.product.create({
             data: {
                 ...dto,
-                categoryId: dto.categoryId,
+
                 images: {
                     create: dto.images?.map((image, index) => ({ imageUrl: image, sortOrder: index })) || []
                 },
@@ -73,7 +72,7 @@ export class ProductsService {
             where: { id },
             data: {
                 ...dto,
-                categoryId: dto.categoryId,
+
                 images: dto.images
                     ? {
                         deleteMany: {},
@@ -96,20 +95,5 @@ export class ProductsService {
         return this.prisma.product.delete({ where: { id } });
     }
 
-    async getFilters() {
-        const brands = await this.prisma.product.findMany({
-            select: { brand: true },
-            distinct: ['brand'],
-            where: { brand: { not: '' } }
-        });
-        const glassTypes = await this.prisma.product.findMany({
-            select: { glassType: true },
-            distinct: ['glassType'],
-            where: { glassType: { not: '' } }
-        });
-        return {
-            brands: brands.map(b => b.brand).filter(Boolean),
-            glassTypes: glassTypes.map(g => g.glassType).filter(Boolean)
-        };
-    }
+
 }

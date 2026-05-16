@@ -1,11 +1,11 @@
 'use client';
 
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../lib/api';
 import { ImageUpload } from './image-upload';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Sparkles } from 'lucide-react';
 
 interface ProductFormProps {
     initialData?: any;
@@ -16,44 +16,41 @@ export function ProductForm({ initialData, isEdit }: ProductFormProps) {
     const router = useRouter();
     const queryClient = useQueryClient();
     const [loading, setLoading] = useState(false);
-    const [formData, setFormData] = useState({
-        name: initialData?.name || '',
-        slug: initialData?.slug || '',
-        description: initialData?.description || '',
-        price: initialData?.price || 0,
-        brand: initialData?.brand || '',
-        glassType: initialData?.glassType || '',
-        stock: initialData?.stock || 0,
-        categoryId: initialData?.categoryId || '',
-        isFeatured: initialData?.isFeatured || false,
-        thumbnail: initialData?.thumbnail || '',
-        images: initialData?.images?.map((img: any) => img.imageUrl) || [],
-        models: initialData?.models?.map((m: any) => m.modelName).join(', ') || ''
-    });
 
-    const { data: categories } = useQuery({
-        queryKey: ['categories-list'],
-        queryFn: async () => {
-            const response = await apiClient.get('/categories');
-            return response.data.data;
-        }
+    const [formData, setFormData] = useState({
+        sku: initialData?.sku || '',
+        thumbnail: initialData?.thumbnail || '',
+        models: initialData?.models?.map((m: any) => m.modelName).join('/') || ''
     });
 
     const handleChange = (e: any) => {
-        const { name, value, type, checked } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: type === 'checkbox' ? checked : type === 'number' ? Number(value) : value
-        }));
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         setLoading(true);
 
+        const parsedModels = formData.models.split(/[\/,]+/).map((s: string) => s.trim()).filter(Boolean);
+        const firstModel = parsedModels[0] || 'Chưa rõ dòng máy';
+
+        // Generate a random ID for slug to ensure uniqueness if name is the same
+        const uniqueId = Math.random().toString(36).substring(2, 8);
+        const baseSlug = formData.sku ? formData.sku.toLowerCase().replace(/[^a-z0-9]+/g, '-') : firstModel.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        const generatedSlug = `${baseSlug}-${uniqueId}`;
+
         const payload = {
-            ...formData,
-            models: formData.models.split(',').map((s: string) => s.trim()).filter(Boolean)
+            sku: formData.sku.trim(),
+            name: `Kính cường lực cho ${firstModel}`,
+            slug: formData.sku ? formData.sku.toLowerCase().replace(/[^a-z0-9]+/g, '-') : generatedSlug,
+            description: `Kính cường lực dùng chung hỗ trợ các dòng máy: ${parsedModels.join(', ')}`,
+            price: 50000,
+            stock: 999,
+            glassType: 'Kính trong suốt',
+            isFeatured: false,
+            thumbnail: formData.thumbnail,
+            models: parsedModels
         };
 
         try {
@@ -63,11 +60,9 @@ export function ProductForm({ initialData, isEdit }: ProductFormProps) {
                 await apiClient.post('/products', payload);
             }
             
-            // Ép xóa cache cũ để tải lại giá và sản phẩm mới
-            await queryClient.invalidateQueries({ queryKey: ['admin-products'] });
-            await queryClient.invalidateQueries({ queryKey: ['products'] });
-            await queryClient.invalidateQueries({ queryKey: ['products-filters'] });
-
+            // Xóa toàn bộ cache để đảm bảo dữ liệu mới nhất được tải lại
+            await queryClient.invalidateQueries();
+            
             router.push('/admin/products');
             router.refresh();
         } catch (error) {
@@ -80,94 +75,51 @@ export function ProductForm({ initialData, isEdit }: ProductFormProps) {
 
     return (
         <form onSubmit={handleSubmit} className="space-y-8">
-            <div className="grid gap-6 md:grid-cols-2">
-                <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-700">Tên sản phẩm</label>
-                    <input name="name" value={formData.name} onChange={handleChange} required className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-slate-400" />
-                </div>
-                <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-700">Slug URL</label>
-                    <input name="slug" value={formData.slug} onChange={handleChange} required className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-slate-400" />
+            <div className="bg-orange-50 text-orange-800 p-4 rounded-2xl flex items-start gap-3 border border-orange-100 mb-8">
+                <Sparkles className="w-5 h-5 shrink-0 mt-0.5" />
+                <div className="text-sm">
+                    <p className="font-semibold mb-1">Chế độ nhập liệu siêu tốc</p>
+                    <p className="opacity-90">Bạn chỉ cần paste một danh sách các máy dùng chung (ngăn cách bởi dấu /).</p>
                 </div>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="space-y-6 rounded-2xl border border-slate-200 bg-slate-50/50 p-6">
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-700">Thương hiệu</label>
-                    <input name="brand" value={formData.brand} onChange={handleChange} required className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-slate-400" />
-                </div>
-                <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-700">Dòng máy (Category)</label>
-                    <div className="relative">
-                        <select name="categoryId" value={formData.categoryId} onChange={handleChange} required className="w-full appearance-none rounded-xl border border-slate-200 bg-white px-4 py-3 pr-10 text-sm outline-none transition focus:border-slate-400">
-                            <option value="">Chọn dòng máy</option>
-                            {categories?.map((cat: any) => (
-                                <option key={cat.id} value={cat.id}>{cat.name}</option>
-                            ))}
-                        </select>
-                        <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                    </div>
-                </div>
-            </div>
-
-            <div className="grid gap-6 md:grid-cols-3">
-                <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-700">Giá bán (VNĐ)</label>
-                    <input name="price" type="number" min="0" value={formData.price} onChange={handleChange} required className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-slate-400" />
-                </div>
-                <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-700">Tồn kho</label>
-                    <input name="stock" type="number" min="0" value={formData.stock} onChange={handleChange} required className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-slate-400" />
-                </div>
-                <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-700">Loại kính (Chống nhìn trộm...)</label>
-                    <input name="glassType" value={formData.glassType} onChange={handleChange} required className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-slate-400" />
+                    <label className="text-sm font-medium text-slate-700">Mã SKU <span className="text-red-500">*</span></label>
+                    <input type="text" name="sku" value={formData.sku} onChange={handleChange} required placeholder="VD: GNS-T054" className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-lg font-bold uppercase outline-none transition focus:border-orange-500" />
                 </div>
             </div>
 
             <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">Các model tương thích (Cách nhau bằng dấu phẩy)</label>
-                <input name="models" value={formData.models} onChange={handleChange} placeholder="VD: iPhone 15 Pro, iPhone 15 Pro Max" className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-slate-400" />
+                <label className="text-sm font-medium text-slate-700">Các model tương thích (Paste thẳng từ Excel) <span className="text-red-500">*</span></label>
+                <textarea
+                    name="models"
+                    value={formData.models}
+                    onChange={handleChange}
+                    rows={4}
+                    required
+                    placeholder="VD: OP RENO 2/F11 pro/VO V15/NEX/S1..."
+                    className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-orange-500 focus:ring-4 focus:ring-orange-50 font-mono leading-relaxed resize-none"
+                />
             </div>
 
-            <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">Mô tả sản phẩm</label>
-                <textarea name="description" value={formData.description} onChange={handleChange} rows={4} required className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-slate-400" />
-            </div>
-
-            <div className="space-y-6 rounded-2xl border border-slate-200 bg-slate-50 p-6">
+            <div className="space-y-6 rounded-2xl border border-slate-200 bg-slate-50/50 p-6">
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-700">Ảnh đại diện (Thumbnail)</label>
-                    <ImageUpload 
-                        value={formData.thumbnail ? [formData.thumbnail] : []} 
-                        onChange={(urls) => setFormData({ ...formData, thumbnail: urls[0] || '' })} 
-                        maxFiles={1} 
-                    />
-                </div>
-                
-                <div className="h-px w-full bg-slate-200" />
-
-                <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-700">Ảnh chi tiết (Tối đa 6 ảnh)</label>
-                    <ImageUpload 
-                        value={formData.images} 
-                        onChange={(urls) => setFormData({ ...formData, images: urls })} 
-                        maxFiles={6} 
+                    <label className="text-sm font-medium text-slate-700">Ảnh đại diện kính (Tùy chọn)</label>
+                    <ImageUpload
+                        value={formData.thumbnail ? [formData.thumbnail] : []}
+                        onChange={(urls) => setFormData({ ...formData, thumbnail: urls[0] || '' })}
+                        maxFiles={1}
                     />
                 </div>
             </div>
 
-            <div className="flex items-center gap-2">
-                <input type="checkbox" name="isFeatured" id="isFeatured" checked={formData.isFeatured} onChange={handleChange} className="h-4 w-4 rounded border-gray-300 text-slate-900 focus:ring-slate-900" />
-                <label htmlFor="isFeatured" className="text-sm font-medium text-slate-700">Sản phẩm nổi bật</label>
-            </div>
-
-            <div className="flex justify-end gap-4 pt-6">
+            <div className="flex justify-end gap-4 pt-6 border-t border-slate-100">
                 <button type="button" onClick={() => router.back()} className="rounded-full px-6 py-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-100">
                     Hủy bỏ
                 </button>
-                <button type="submit" disabled={loading} className="rounded-full bg-slate-950 px-8 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:opacity-50">
-                    {loading ? 'Đang lưu...' : 'Lưu sản phẩm'}
+                <button type="submit" disabled={loading} className="rounded-full bg-[#f05a28] px-8 py-3 text-sm font-semibold text-white transition hover:bg-orange-600 disabled:opacity-50 flex items-center gap-2 shadow-md shadow-orange-500/20">
+                    {loading ? 'Đang lưu...' : isEdit ? 'Cập Nhật Sản Phẩm' : 'Tạo Sản Phẩm Mới'}
                 </button>
             </div>
         </form>

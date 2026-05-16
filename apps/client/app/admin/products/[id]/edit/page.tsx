@@ -15,14 +15,8 @@ export default function EditProductPage() {
     const { data: product, isLoading } = useQuery({
         queryKey: ['product', id],
         queryFn: async () => {
-            // Note: Since the backend currently only exposes /products/:slug,
-            // we should either fetch all products and find it, or if backend has GET /products/:id, use it.
-            // Wait, does the backend have GET /products/:id? 
-            // In categories it's just GET /categories.
-            // Let's assume there is an endpoint or we just fetch the product list and find it.
-            const response = await apiClient.get('/products?page=1&pageSize=100');
-            const products = response.data.data.items;
-            return products.find((p: any) => p.id === id);
+            const response = await apiClient.get(`/products/${id}`);
+            return response.data.data;
         }
     });
 
@@ -35,17 +29,17 @@ export default function EditProductPage() {
                             <ArrowLeft className="h-5 w-5" />
                         </Link>
                         <div>
-                            <p className="text-sm uppercase tracking-[0.3em] text-slate-500">Quản lý sản phẩm</p>
-                            <h1 className="text-3xl font-semibold text-slate-950">Chỉnh sửa</h1>
+                            <p className="text-xs font-bold uppercase tracking-[0.3em] text-slate-400 mb-1">Hệ thống quản trị</p>
+                            <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">Chỉnh sửa</h1>
                         </div>
                     </div>
 
                     {isLoading ? (
                         <div className="flex h-40 items-center justify-center text-slate-500">Đang tải dữ liệu...</div>
                     ) : product ? (
-                        <ProductForm isEdit={true} initialData={product} />
+                        <ProductForm key={product.id} isEdit={true} initialData={product} />
                     ) : (
-                        <div className="flex h-40 items-center justify-center text-slate-500">Không tìm thấy sản phẩm.</div>
+                        <div className="flex h-40 items-center justify-center text-slate-500">Không tìm thấy sản phẩm (ID: {id}).</div>
                     )}
                 </div>
             </div>
