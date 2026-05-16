@@ -6,13 +6,13 @@ import { QueryProvider } from '../lib/query-client';
 const outfit = Outfit({ subsets: ['latin', 'latin-ext'], variable: '--font-outfit' });
 
 export const metadata: Metadata = {
-    title: 'Kinh Top | Kính Cường Lực Cao Cấp',
-    description: 'Thương hiệu phân phối kính cường lực điện thoại chính hãng, bảo vệ tối đa thiết bị của bạn với công nghệ Nano & cường lực 9H.',
-    metadataBase: new URL('https://kinhtop.example'),
+    title: 'Tra cứu Kính Cường Lực Cao Cấp',
+    description: 'Hệ thống tra cứu kính cường lực dùng chung cho các dòng máy điện thoại chuyên nghiệp.',
+    metadataBase: new URL('https://kinhcuongluc.example'),
     openGraph: {
-        title: 'Kinh Top | Kính Cường Lực Cao Cấp',
-        description: 'Thương hiệu phân phối kính cường lực điện thoại chính hãng.',
-        siteName: 'Kinh Top',
+        title: 'Tra cứu Kính Cường Lực Cao Cấp',
+        description: 'Hệ thống tra cứu kính cường lực dùng chung cho các dòng máy điện thoại chính xác.',
+        siteName: 'Tra cứu Kính Cường Lực',
         type: 'website'
     }
 };

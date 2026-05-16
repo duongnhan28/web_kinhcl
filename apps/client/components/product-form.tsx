@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../lib/api';
 import { ImageUpload } from './image-upload';
-import { ChevronDown, Sparkles } from 'lucide-react';
+import { ChevronDown, Sparkles, CheckCircle2 } from 'lucide-react';
 
 interface ProductFormProps {
     initialData?: any;
@@ -16,6 +16,7 @@ export function ProductForm({ initialData, isEdit }: ProductFormProps) {
     const router = useRouter();
     const queryClient = useQueryClient();
     const [loading, setLoading] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(false);
 
     const [formData, setFormData] = useState({
         sku: initialData?.sku || '',
@@ -30,6 +31,12 @@ export function ProductForm({ initialData, isEdit }: ProductFormProps) {
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
+
+        if (!formData.thumbnail) {
+            alert('Vui lòng tải lên ảnh đại diện cho kính cường lực!');
+            return;
+        }
+
         setLoading(true);
 
         const parsedModels = formData.models.split(/[\/,]+/).map((s: string) => s.trim()).filter(Boolean);
@@ -63,8 +70,11 @@ export function ProductForm({ initialData, isEdit }: ProductFormProps) {
             // Xóa toàn bộ cache để đảm bảo dữ liệu mới nhất được tải lại
             await queryClient.invalidateQueries();
             
-            router.push('/admin/products');
-            router.refresh();
+            setShowSuccess(true);
+            setTimeout(() => {
+                router.push('/admin/products');
+                router.refresh();
+            }, 1500);
         } catch (error) {
             console.error(error);
             alert('Có lỗi xảy ra khi lưu sản phẩm!');
@@ -72,6 +82,19 @@ export function ProductForm({ initialData, isEdit }: ProductFormProps) {
             setLoading(false);
         }
     };
+
+    if (showSuccess) {
+        return (
+            <div className="flex flex-col items-center justify-center py-20 text-center animate-in fade-in zoom-in duration-300">
+                <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mb-6">
+                    <CheckCircle2 className="w-10 h-10" />
+                </div>
+                <h2 className="text-2xl font-extrabold text-slate-900 mb-2">Thành công!</h2>
+                <p className="text-slate-500">Sản phẩm đã được lưu lại hệ thống.</p>
+                <p className="text-xs text-slate-400 mt-4 italic">Đang chuyển hướng...</p>
+            </div>
+        );
+    }
 
     return (
         <form onSubmit={handleSubmit} className="space-y-8">
