@@ -28,9 +28,8 @@ const nextConfig: NextConfig = {
     reactStrictMode: true,
     output: 'standalone',
     experimental: {
-        typedRoutes: true,
-    },
-    transpilePackages: ['server']
+        typedRoutes: true
+    }
 };
 
 export default nextConfig;

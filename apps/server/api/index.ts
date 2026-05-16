@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from '../../../../apps/server/src/app.module';
+import { AppModule } from '../src/app.module';
 import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
@@ -8,13 +8,6 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { configure as serverlessExpress } from '@vendia/serverless-express';
 
 let cachedServer: any;
-
-export const config = {
-  api: {
-    externalResolver: true,
-    bodyParser: false,
-  },
-};
 
 export default async function handler(req: any, res: any) {
     if (!cachedServer) {
