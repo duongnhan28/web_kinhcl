@@ -3,7 +3,7 @@
     "private": true,
     "packageManager": "pnpm@9.15.2",
     "engines": {
-        "node": "20.x"
+        "node": ">=20.x"
     },
     "workspaces": [
         "apps/*",
@@ -14,6 +14,7 @@
         "dev:server": "pnpm --filter server start:dev",
         "dev": "concurrently \"pnpm dev:server\" \"pnpm dev:client\"",
         "build": "pnpm --recursive build",
+        "postinstall": "pnpm --filter server exec prisma generate",
         "lint": "pnpm --recursive lint",
         "format": "prettier --write ."
     },
