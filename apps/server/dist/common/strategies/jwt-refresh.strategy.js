@@ -21,7 +21,7 @@ let JwtRefreshStrategy = class JwtRefreshStrategy extends (0, passport_1.Passpor
                     return req?.cookies?.refreshToken;
                 }]),
             ignoreExpiration: false,
-            secretOrKey: config.get('JWT_REFRESH_SECRET')
+            secretOrKey: config.get('JWT_REFRESH_SECRET') || 'default-jwt-refresh-secret-key-987654321'
         });
     }
     async validate(payload) {

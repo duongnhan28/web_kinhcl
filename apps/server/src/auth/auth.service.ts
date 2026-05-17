@@ -30,7 +30,7 @@ export class AuthService {
         const payload = { username: admin.username, sub: admin.id };
         const accessToken = this.jwtService.sign(payload, { expiresIn: ACCESS_TOKEN_EXPIRES_IN });
         const refreshToken = this.jwtService.sign(payload, {
-            secret: this.config.get<string>('JWT_REFRESH_SECRET'),
+            secret: this.config.get<string>('JWT_REFRESH_SECRET') || 'default-jwt-refresh-secret-key-987654321',
             expiresIn: REFRESH_TOKEN_EXPIRES_IN
         });
 
@@ -45,7 +45,7 @@ export class AuthService {
         const tokenPayload = { username: payload.username, sub: payload.id };
         const accessToken = this.jwtService.sign(tokenPayload, { expiresIn: ACCESS_TOKEN_EXPIRES_IN });
         const refreshToken = this.jwtService.sign(tokenPayload, {
-            secret: this.config.get<string>('JWT_REFRESH_SECRET'),
+            secret: this.config.get<string>('JWT_REFRESH_SECRET') || 'default-jwt-refresh-secret-key-987654321',
             expiresIn: REFRESH_TOKEN_EXPIRES_IN
         });
 

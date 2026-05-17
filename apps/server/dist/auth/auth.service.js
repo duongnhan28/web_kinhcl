@@ -72,7 +72,7 @@ let AuthService = class AuthService {
         const payload = { username: admin.username, sub: admin.id };
         const accessToken = this.jwtService.sign(payload, { expiresIn: constants_1.ACCESS_TOKEN_EXPIRES_IN });
         const refreshToken = this.jwtService.sign(payload, {
-            secret: this.config.get('JWT_REFRESH_SECRET'),
+            secret: this.config.get('JWT_REFRESH_SECRET') || 'default-jwt-refresh-secret-key-987654321',
             expiresIn: constants_1.REFRESH_TOKEN_EXPIRES_IN
         });
         return { accessToken, refreshToken };
@@ -84,7 +84,7 @@ let AuthService = class AuthService {
         const tokenPayload = { username: payload.username, sub: payload.id };
         const accessToken = this.jwtService.sign(tokenPayload, { expiresIn: constants_1.ACCESS_TOKEN_EXPIRES_IN });
         const refreshToken = this.jwtService.sign(tokenPayload, {
-            secret: this.config.get('JWT_REFRESH_SECRET'),
+            secret: this.config.get('JWT_REFRESH_SECRET') || 'default-jwt-refresh-secret-key-987654321',
             expiresIn: constants_1.REFRESH_TOKEN_EXPIRES_IN
         });
         return { accessToken, refreshToken };
