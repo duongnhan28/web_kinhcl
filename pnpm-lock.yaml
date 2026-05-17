@@ -135,6 +135,9 @@ importers:
       cookie-parser:
         specifier: ^1.4.6
         version: 1.4.7
+      express:
+        specifier: ^5.2.1
+        version: 5.2.1
       express-rate-limit:
         specifier: ^6.7.0
         version: 6.11.2(express@5.2.1)
