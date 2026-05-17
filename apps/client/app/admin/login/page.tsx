@@ -8,8 +8,8 @@ import { useAuthStore } from '../../../hooks/useAuthStore';
 export default function AdminLoginPage() {
     const router = useRouter();
     const setToken = useAuthStore((state) => state.setToken);
-    const [username, setUsername] = useState('admin');
-    const [password, setPassword] = useState('admin123');
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
@@ -37,11 +37,11 @@ export default function AdminLoginPage() {
                 <form className="space-y-6" onSubmit={handleSubmit}>
                     <div>
                         <label className="mb-2 block text-sm font-medium text-slate-700">Tên đăng nhập</label>
-                        <input value={username} onChange={(e) => setUsername(e.target.value)} className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-slate-400" />
+                        <input value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Nhập tên đăng nhập" className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-slate-400" />
                     </div>
                     <div>
                         <label className="mb-2 block text-sm font-medium text-slate-700">Mật khẩu</label>
-                        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-slate-400" />
+                        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Nhập mật khẩu" className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-slate-400" />
                     </div>
                     {error && <p className="text-sm text-red-600">{error}</p>}
                     <button type="submit" disabled={loading} className="inline-flex w-full justify-center rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:opacity-50">
