@@ -1,31 +1,47 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import sharp from 'sharp';
-import { join } from 'path';
-import { promises as fs } from 'fs';
+import { ConfigService } from '@nestjs/config';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { randomBytes } from 'crypto';
 
 @Injectable()
 export class UploadService {
-    async uploadImage(file: Express.Multer.File) {
+    private supabase: SupabaseClient;
+    private bucket = 'images';
+
+    constructor(private config: ConfigService) {
+        this.supabase = createClient(
+            this.config.get<string>('SUPABASE_URL')!,
+            this.config.get<string>('SUPABASE_SERVICE_KEY')!
+        );
+    }
+
+    async uploadImage(file: Express.Multer.File): Promise<string> {
         try {
-            const optimized = await sharp(file.buffer).resize({ width: 1400, withoutEnlargement: true }).webp({ quality: 80 }).toBuffer();
-            
-            const uploadDir = join(process.cwd(), 'public', 'uploads');
-            await fs.mkdir(uploadDir, { recursive: true });
+            const filename = `${randomBytes(16).toString('hex')}.${file.mimetype.split('/')[1] || 'jpg'}`;
+            const filepath = `uploads/${filename}`;
 
-            const filename = `${randomBytes(16).toString('hex')}.webp`;
-            const filepath = join(uploadDir, filename);
+            const { error } = await this.supabase.storage
+                .from(this.bucket)
+                .upload(filepath, file.buffer, {
+                    contentType: file.mimetype,
+                    upsert: false
+                });
 
-            await fs.writeFile(filepath, optimized);
+            if (error) {
+                throw new Error(error.message);
+            }
 
-            const port = process.env.PORT || 4000;
-            return `http://localhost:${port}/public/uploads/${filename}`;
-        } catch (error) {
-            throw new InternalServerErrorException('Image processing failed');
+            const { data } = this.supabase.storage
+                .from(this.bucket)
+                .getPublicUrl(filepath);
+
+            return data.publicUrl;
+        } catch (error: any) {
+            throw new InternalServerErrorException('Image upload failed: ' + error.message);
         }
     }
 
-    async uploadMany(files: Express.Multer.File[]) {
+    async uploadMany(files: Express.Multer.File[]): Promise<string[]> {
         return Promise.all(files.map((file) => this.uploadImage(file)));
     }
 }
