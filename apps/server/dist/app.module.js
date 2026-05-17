@@ -13,7 +13,6 @@ const core_1 = require("@nestjs/core");
 const prisma_module_1 = require("./prisma/prisma.module");
 const auth_module_1 = require("./auth/auth.module");
 const products_module_1 = require("./products/products.module");
-const categories_module_1 = require("./categories/categories.module");
 const upload_module_1 = require("./upload/upload.module");
 const http_exception_filter_1 = require("./common/filters/http-exception.filter");
 const transform_interceptor_1 = require("./common/interceptors/transform.interceptor");
@@ -27,7 +26,6 @@ exports.AppModule = AppModule = __decorate([
             prisma_module_1.PrismaModule,
             auth_module_1.AuthModule,
             products_module_1.ProductsModule,
-            categories_module_1.CategoriesModule,
             upload_module_1.UploadModule
         ],
         providers: [

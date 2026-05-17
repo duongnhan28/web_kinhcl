@@ -16,6 +16,11 @@ class CreateProductDto {
 exports.CreateProductDto = CreateProductDto;
 __decorate([
     (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateProductDto.prototype, "sku", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateProductDto.prototype, "name", void 0);
@@ -38,21 +43,12 @@ __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
-], CreateProductDto.prototype, "brand", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
 ], CreateProductDto.prototype, "glassType", void 0);
 __decorate([
     (0, class_validator_1.IsInt)(),
     (0, class_validator_1.Min)(0),
     __metadata("design:type", Number)
 ], CreateProductDto.prototype, "stock", void 0);
-__decorate([
-    (0, class_validator_1.IsUUID)(),
-    __metadata("design:type", String)
-], CreateProductDto.prototype, "categoryId", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),

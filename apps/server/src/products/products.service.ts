@@ -19,7 +19,7 @@ export class ProductsService {
                 { models: { some: { modelName: { contains: query.search, mode: 'insensitive' } } } }
             ];
 
-        const orderBy = query.sort === 'price_desc'
+        const orderBy: any = query.sort === 'price_desc'
             ? { price: 'desc' }
             : query.sort === 'name_asc'
                 ? { name: 'asc' }

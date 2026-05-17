@@ -18,17 +18,14 @@ let ProductsService = class ProductsService {
     }
     async findAll(query) {
         const where = {};
-        if (query.brand)
-            where.brand = query.brand;
         if (query.glassType)
             where.glassType = query.glassType;
-        if (query.categoryId)
-            where.categoryId = query.categoryId;
         if (query.search)
             where.OR = [
+                { sku: { contains: query.search, mode: 'insensitive' } },
                 { name: { contains: query.search, mode: 'insensitive' } },
                 { description: { contains: query.search, mode: 'insensitive' } },
-                { brand: { contains: query.search, mode: 'insensitive' } }
+                { models: { some: { modelName: { contains: query.search, mode: 'insensitive' } } } }
             ];
         const orderBy = query.sort === 'price_desc'
             ? { price: 'desc' }
@@ -44,23 +41,22 @@ let ProductsService = class ProductsService {
                 orderBy,
                 take: pageSize,
                 skip,
-                include: { images: true, category: true, models: true }
+                include: { images: true, models: true }
             }),
             this.prisma.product.count({ where })
         ]);
         return { items, total, page, pageSize };
     }
-    async findBySlug(slug) {
+    async findById(id) {
         return this.prisma.product.findUnique({
-            where: { slug },
-            include: { images: true, category: true, models: true }
+            where: { id },
+            include: { images: true, models: true }
         });
     }
     async create(dto) {
         const product = await this.prisma.product.create({
             data: {
                 ...dto,
-                categoryId: dto.categoryId,
                 images: {
                     create: dto.images?.map((image, index) => ({ imageUrl: image, sortOrder: index })) || []
                 },
@@ -76,7 +72,6 @@ let ProductsService = class ProductsService {
             where: { id },
             data: {
                 ...dto,
-                categoryId: dto.categoryId,
                 images: dto.images
                     ? {
                         deleteMany: {},

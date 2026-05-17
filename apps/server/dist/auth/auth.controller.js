@@ -36,6 +36,9 @@ let AuthController = class AuthController {
     async profile(adminId) {
         return this.authService.getProfile(adminId);
     }
+    async changePassword(adminId, body) {
+        return this.authService.changePassword(adminId, body.oldPassword, body.newPassword);
+    }
 };
 exports.AuthController = AuthController;
 __decorate([
@@ -58,11 +61,20 @@ __decorate([
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)('profile'),
-    __param(0, (0, user_decorator_1.User)('sub')),
+    __param(0, (0, user_decorator_1.User)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "profile", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Post)('change-password'),
+    __param(0, (0, user_decorator_1.User)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "changePassword", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService])

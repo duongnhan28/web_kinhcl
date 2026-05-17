@@ -10,7 +10,7 @@ import { useParams } from 'next/navigation';
 
 export default function EditProductPage() {
     const params = useParams();
-    const id = params.id as string;
+    const id = params?.id as string;
 
     const { data: product, isLoading } = useQuery({
         queryKey: ['product', id],

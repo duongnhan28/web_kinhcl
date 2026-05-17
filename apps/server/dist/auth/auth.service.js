@@ -81,7 +81,7 @@ let AuthService = class AuthService {
         if (!payload) {
             throw new common_1.UnauthorizedException('Refresh token invalid');
         }
-        const tokenPayload = { username: payload.username, sub: payload.sub };
+        const tokenPayload = { username: payload.username, sub: payload.id };
         const accessToken = this.jwtService.sign(tokenPayload, { expiresIn: constants_1.ACCESS_TOKEN_EXPIRES_IN });
         const refreshToken = this.jwtService.sign(tokenPayload, {
             secret: this.config.get('JWT_REFRESH_SECRET'),
@@ -95,8 +95,23 @@ let AuthService = class AuthService {
             select: { id: true, username: true, createdAt: true }
         });
     }
+    async changePassword(userId, oldPass, newPass) {
+        const admin = await this.prisma.admin.findUnique({ where: { id: userId } });
+        if (!admin)
+            throw new common_1.UnauthorizedException('Admin not found');
+        const isValid = await bcrypt.compare(oldPass, admin.passwordHash);
+        if (!isValid)
+            throw new common_1.UnauthorizedException('Mật khẩu cũ không chính xác');
+        const passwordHash = await bcrypt.hash(newPass, 10);
+        await this.prisma.admin.update({
+            where: { id: userId },
+            data: { passwordHash }
+        });
+        return { message: 'Đổi mật khẩu thành công' };
+    }
     getRefreshCookie(token) {
-        return `${constants_1.COOKIE_REFRESH_TOKEN}=${token}; HttpOnly; Path=/api; Max-Age=${7 * 24 * 60 * 60}; SameSite=Lax; Secure`;
+        const isProduction = process.env.NODE_ENV === 'production';
+        return `${constants_1.COOKIE_REFRESH_TOKEN}=${token}; HttpOnly; Path=/api; Max-Age=${7 * 24 * 60 * 60}; SameSite=Lax${isProduction ? '; Secure' : ''}`;
     }
 };
 exports.AuthService = AuthService;
