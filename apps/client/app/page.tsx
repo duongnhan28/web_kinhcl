@@ -8,6 +8,24 @@ import { Footer } from '../components/footer';
 import { Search, Check, Smartphone, Box } from 'lucide-react';
 import Link from 'next/link';
 
+// Helper: highlight phần text khớp với keyword
+function HighlightText({ text, keyword }: { text: string; keyword: string }) {
+    if (!keyword.trim()) return <>{text}</>;
+    const regex = new RegExp(`(${keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    const parts = text.split(regex);
+    return (
+        <>
+            {parts.map((part, i) =>
+                regex.test(part) ? (
+                    <mark key={i} className="bg-transparent text-orange-600 font-bold not-italic">{part}</mark>
+                ) : (
+                    <span key={i}>{part}</span>
+                )
+            )}
+        </>
+    );
+}
+
 export default function HomePage() {
     const [search, setSearch] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -122,11 +140,21 @@ export default function HomePage() {
                                                     <span className="text-base font-semibold text-slate-900">Dùng chung với {product.models?.length || 0} dòng máy:</span>
                                                 </div>
                                                 <div className="flex flex-wrap gap-2.5">
-                                                    {product.models?.map((m: any) => (
-                                                        <span key={m.id} className="inline-flex items-center px-4 py-1.5 rounded-full border border-slate-200 bg-white text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 transition">
-                                                            {m.modelName}
-                                                        </span>
-                                                    ))}
+                                                    {product.models?.map((m: any) => {
+                                                        const isMatch = debouncedSearch && m.modelName.toLowerCase().includes(debouncedSearch.toLowerCase());
+                                                        return (
+                                                            <span
+                                                                key={m.id}
+                                                                className={`inline-flex items-center px-4 py-1.5 rounded-full border text-sm font-medium shadow-sm transition ${
+                                                                    isMatch
+                                                                        ? 'border-orange-400 bg-orange-50 text-orange-700 ring-1 ring-orange-300 scale-105'
+                                                                        : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                                                                }`}
+                                                            >
+                                                                <HighlightText text={m.modelName} keyword={debouncedSearch} />
+                                                            </span>
+                                                        );
+                                                    })}
                                                     {(!product.models || product.models.length === 0) && (
                                                         <span className="text-sm text-slate-500 italic">Chưa có danh sách máy hỗ trợ</span>
                                                     )}
