@@ -73,7 +73,7 @@ export default function HomePage() {
                         
                         <div className="text-center mb-10 w-full">
                             <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4 leading-tight tracking-tight">
-                                Tra cứu <span className="text-orange-600">Kính Cường Lực</span>
+                                Tra cứu <span className="text-orange-600">Kính Cường Lực con ngựa Oufeidun</span>
                             </h1>
                             <p className="text-slate-500 max-w-lg mx-auto">
                                 Nhập tên điện thoại của bạn (VD: RENO 2, iPhone 15...) để tìm chính xác mã kính cường lực dùng chung.
@@ -100,9 +100,12 @@ export default function HomePage() {
                         {/* Search Results */}
                         <div className="w-full max-w-2xl space-y-6">
                             {debouncedSearch.length === 0 ? (
-                                <div className="text-center py-16 px-6 rounded-3xl border border-dashed border-slate-300 bg-white/50">
-                                    <Box className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-                                    <p className="text-slate-500">Hãy nhập tên dòng máy để bắt đầu tìm kiếm.</p>
+                                <div className="w-full rounded-3xl overflow-hidden shadow-md border border-slate-200 bg-white">
+                                    <img 
+                                        src="/banner-search.jpg" 
+                                        alt="Kính Cường Lực Con Ngựa Oufeidun" 
+                                        className="w-full h-auto object-cover" 
+                                    />
                                 </div>
                             ) : isLoading ? (
                                 <div className="space-y-4 animate-pulse">
