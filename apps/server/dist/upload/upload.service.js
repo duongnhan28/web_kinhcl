@@ -17,14 +17,25 @@ const crypto_1 = require("crypto");
 let UploadService = class UploadService {
     constructor(config) {
         this.config = config;
+        this._supabase = null;
         this.bucket = 'images';
-        this.supabase = (0, supabase_js_1.createClient)(this.config.get('SUPABASE_URL'), this.config.get('SUPABASE_SERVICE_KEY'));
+    }
+    getClient() {
+        if (!this._supabase) {
+            const url = this.config.get('SUPABASE_URL') || 'https://ijogpvaucdxhxhcmawur.supabase.co';
+            const key = this.config.get('SUPABASE_SERVICE_KEY') || '';
+            if (!key)
+                throw new common_1.InternalServerErrorException('SUPABASE_SERVICE_KEY is not configured');
+            this._supabase = (0, supabase_js_1.createClient)(url, key);
+        }
+        return this._supabase;
     }
     async uploadImage(file) {
         try {
+            const supabase = this.getClient();
             const filename = `${(0, crypto_1.randomBytes)(16).toString('hex')}.${file.mimetype.split('/')[1] || 'jpg'}`;
             const filepath = `uploads/${filename}`;
-            const { error } = await this.supabase.storage
+            const { error } = await supabase.storage
                 .from(this.bucket)
                 .upload(filepath, file.buffer, {
                 contentType: file.mimetype,
@@ -33,7 +44,7 @@ let UploadService = class UploadService {
             if (error) {
                 throw new Error(error.message);
             }
-            const { data } = this.supabase.storage
+            const { data } = supabase.storage
                 .from(this.bucket)
                 .getPublicUrl(filepath);
             return data.publicUrl;
