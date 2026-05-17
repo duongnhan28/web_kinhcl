@@ -73,7 +73,7 @@ export default function HomePage() {
                         
                         <div className="text-center mb-10 w-full">
                             <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4 leading-tight tracking-tight">
-                                Tra cứu <span className="text-orange-600">Kính Cường Lực con ngựa Oufeidun</span>
+                                Tra cứu <span className="text-orange-600">kính cường lực con ngựa Oufeidun</span>
                             </h1>
                             <p className="text-slate-500 max-w-lg mx-auto">
                                 Nhập tên điện thoại của bạn (VD: RENO 2, iPhone 15...) để tìm chính xác mã kính cường lực dùng chung.
