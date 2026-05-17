@@ -3,39 +3,41 @@ import { AppModule } from '../src/app.module';
 import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
-import { json, urlencoded } from 'express';
+import { json, urlencoded, Express } from 'express';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { configure as serverlessExpress } from '@vendia/serverless-express';
+import { IncomingMessage, ServerResponse } from 'http';
 
-let cachedServer: any;
+let cachedApp: Express;
 
-export default async function handler(req: any, res: any) {
-    if (!cachedServer) {
-        const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-            cors: {
-                origin: true,
-                credentials: true
-            }
-        });
+async function createApp(): Promise<Express> {
+    const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+        cors: {
+            origin: true,
+            credentials: true
+        }
+    });
 
-        app.setGlobalPrefix('api');
-        app.use(helmet({ crossOriginResourcePolicy: false }));
-        app.use(cookieParser());
-        app.use(json({ limit: '5mb' }));
-        app.use(urlencoded({ extended: true, limit: '5mb' }));
-        app.useGlobalPipes(
-            new ValidationPipe({
-                whitelist: true,
-                transform: true,
-                forbidNonWhitelisted: false,
-                transformOptions: { enableImplicitConversion: true }
-            })
-        );
+    app.setGlobalPrefix('api');
+    app.use(helmet({ crossOriginResourcePolicy: false }));
+    app.use(cookieParser());
+    app.use(json({ limit: '5mb' }));
+    app.use(urlencoded({ extended: true, limit: '5mb' }));
+    app.useGlobalPipes(
+        new ValidationPipe({
+            whitelist: true,
+            transform: true,
+            forbidNonWhitelisted: false,
+            transformOptions: { enableImplicitConversion: true }
+        })
+    );
 
-        await app.init();
-        const expressApp = app.getHttpAdapter().getInstance();
-        cachedServer = serverlessExpress({ app: expressApp });
+    await app.init();
+    return app.getHttpAdapter().getInstance();
+}
+
+export default async function handler(req: IncomingMessage, res: ServerResponse) {
+    if (!cachedApp) {
+        cachedApp = await createApp();
     }
-
-    return cachedServer(req, res);
+    cachedApp(req, res);
 }
