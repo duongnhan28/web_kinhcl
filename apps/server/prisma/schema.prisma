@@ -22,9 +22,6 @@ model Product {
   name        String
   slug        String         @unique
   description String
-  price       Int
-  glassType   String
-  stock       Int
   thumbnail   String
   isFeatured  Boolean        @default(false)
   createdAt   DateTime       @default(now())

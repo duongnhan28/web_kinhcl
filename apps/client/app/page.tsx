@@ -72,8 +72,8 @@ export default function HomePage() {
                     <div className="col-span-1 lg:col-span-6 flex flex-col items-center">
                         
                         <div className="text-center mb-10 w-full">
-                            <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4 leading-tight tracking-tight">
-                                Tra cứu <span className="text-orange-600">kính cường lực con ngựa Oufeidun</span>
+                            <h1 className="text-3xl md:text-4xl font-normal text-slate-900 mb-4 leading-tight">
+                                Tra Cứu <span className="text-orange-600">Kính Cường Lực Con Ngựa Oufeidun</span>
                             </h1>
                             <p className="text-slate-500 max-w-lg mx-auto">
                                 Nhập tên điện thoại của bạn (VD: RENO 2, iPhone 15...) để tìm chính xác mã kính cường lực dùng chung.
@@ -122,13 +122,21 @@ export default function HomePage() {
                                 products.map((product: any) => (
                                     <div key={product.id} className="rounded-3xl border border-slate-200 bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                                         <div className="p-6 md:p-8 flex flex-col md:flex-row gap-8 items-start">
-                                            {/* Product Image */}
+                                            {/* Product Images */}
                                             <div className="shrink-0 flex flex-col items-center gap-2">
-                                                <div className="w-32 h-32 md:w-40 md:h-40 rounded-2xl bg-slate-100 overflow-hidden border border-slate-200 relative">
-                                                    {product.thumbnail ? (
-                                                        <img src={product.thumbnail} alt="Bao bì" className="w-full h-full object-cover" />
+                                                <div className="flex gap-3">
+                                                    {product.images && product.images.length > 0 ? (
+                                                        product.images.map((img: any, idx: number) => (
+                                                            <div key={img.id || idx} className="w-24 h-24 md:w-28 md:h-28 rounded-2xl bg-slate-100 overflow-hidden border border-slate-200 relative shadow-sm hover:scale-105 transition-transform duration-200">
+                                                                <img src={img.imageUrl} alt={`Bao bì ${idx + 1}`} className="w-full h-full object-cover" />
+                                                            </div>
+                                                        ))
+                                                    ) : product.thumbnail ? (
+                                                        <div className="w-32 h-32 md:w-40 md:h-40 rounded-2xl bg-slate-100 overflow-hidden border border-slate-200 relative shadow-sm">
+                                                            <img src={product.thumbnail} alt="Bao bì" className="w-full h-full object-cover" />
+                                                        </div>
                                                     ) : (
-                                                        <div className="w-full h-full flex items-center justify-center text-slate-400">
+                                                        <div className="w-32 h-32 md:w-40 md:h-40 rounded-2xl bg-slate-100 overflow-hidden border border-slate-200 flex items-center justify-center text-slate-400 shadow-sm">
                                                             <Box className="w-8 h-8" />
                                                         </div>
                                                     )}

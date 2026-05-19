@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -10,23 +10,18 @@ export class ProductsService {
 
     async findAll(query: QueryProductsDto) {
         const where: any = {};
-        if (query.glassType) where.glassType = query.glassType;
         if (query.search)
             where.OR = [
                 { sku: { contains: query.search, mode: 'insensitive' } },
-                { name: { contains: query.search, mode: 'insensitive' } },
-                { description: { contains: query.search, mode: 'insensitive' } },
                 { models: { some: { modelName: { contains: query.search, mode: 'insensitive' } } } }
             ];
 
-        const orderBy: any = query.sort === 'price_desc'
-            ? { price: 'desc' }
-            : query.sort === 'name_asc'
-                ? { name: 'asc' }
-                : { createdAt: 'desc' };
+        const orderBy: any = query.sort === 'name_asc'
+            ? { name: 'asc' }
+            : { createdAt: 'desc' };
 
         const page = Math.max(query.page, 1);
-        const pageSize = Math.min(query.pageSize, 24);
+        const pageSize = Math.min(query.pageSize, 100);
         const skip = (page - 1) * pageSize;
 
         const [items, total] = await Promise.all([
@@ -51,6 +46,15 @@ export class ProductsService {
     }
 
     async create(dto: CreateProductDto) {
+        if (dto.sku) {
+            const existing = await this.prisma.product.findFirst({
+                where: { sku: dto.sku.trim() }
+            });
+            if (existing) {
+                throw new BadRequestException('Mã SKU này đã tồn tại trong hệ thống. Vui lòng nhập mã khác!');
+            }
+        }
+
         const product = await this.prisma.product.create({
             data: {
                 ...dto,
@@ -68,6 +72,18 @@ export class ProductsService {
     }
 
     async update(id: string, dto: UpdateProductDto) {
+        if (dto.sku) {
+            const existing = await this.prisma.product.findFirst({
+                where: {
+                    sku: dto.sku.trim(),
+                    id: { not: id }
+                }
+            });
+            if (existing) {
+                throw new BadRequestException('Mã SKU này đã tồn tại trong hệ thống. Vui lòng nhập mã khác!');
+            }
+        }
+
         return this.prisma.product.update({
             where: { id },
             data: {

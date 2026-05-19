@@ -20,7 +20,9 @@ export function ProductForm({ initialData, isEdit }: ProductFormProps) {
 
     const [formData, setFormData] = useState({
         sku: initialData?.sku || '',
-        thumbnail: initialData?.thumbnail || '',
+        images: (initialData?.images && initialData.images.length > 0)
+            ? initialData.images.map((img: any) => img.imageUrl)
+            : (initialData?.thumbnail ? [initialData.thumbnail] : []),
         models: initialData?.models?.map((m: any) => m.modelName).join('/') || ''
     });
 
@@ -32,8 +34,8 @@ export function ProductForm({ initialData, isEdit }: ProductFormProps) {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
 
-        if (!formData.thumbnail) {
-            alert('Vui lòng tải lên ảnh đại diện cho kính cường lực!');
+        if (!formData.images || formData.images.length === 0) {
+            alert('Vui lòng tải lên ít nhất 1 ảnh cho kính cường lực!');
             return;
         }
 
@@ -50,14 +52,12 @@ export function ProductForm({ initialData, isEdit }: ProductFormProps) {
         const payload = {
             sku: formData.sku.trim(),
             name: `Kính cường lực cho ${firstModel}`,
-            slug: formData.sku ? formData.sku.toLowerCase().replace(/[^a-z0-9]+/g, '-') : generatedSlug,
+            slug: formData.sku ? `${formData.sku.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${uniqueId}` : generatedSlug,
             description: `Kính cường lực dùng chung hỗ trợ các dòng máy: ${parsedModels.join(', ')}`,
-            price: 50000,
-            stock: 999,
-            glassType: 'Kính trong suốt',
             isFeatured: false,
-            thumbnail: formData.thumbnail,
-            models: parsedModels
+            thumbnail: formData.images[0] || '',
+            models: parsedModels,
+            images: formData.images
         };
 
         try {
@@ -75,9 +75,14 @@ export function ProductForm({ initialData, isEdit }: ProductFormProps) {
                 router.push('/admin/products');
                 router.refresh();
             }, 1500);
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
-            alert('Có lỗi xảy ra khi lưu sản phẩm!');
+            const serverMessage = error.response?.data?.message;
+            if (serverMessage) {
+                alert(serverMessage);
+            } else {
+                alert('Có lỗi xảy ra khi lưu sản phẩm!');
+            }
         } finally {
             setLoading(false);
         }
@@ -128,11 +133,11 @@ export function ProductForm({ initialData, isEdit }: ProductFormProps) {
 
             <div className="space-y-6 rounded-2xl border border-slate-200 bg-slate-50/50 p-6">
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-700">Ảnh đại diện kính (Tùy chọn)</label>
+                    <label className="text-sm font-medium text-slate-700">Hình ảnh kính cường lực (Tải lên tối đa 2 ảnh)</label>
                     <ImageUpload
-                        value={formData.thumbnail ? [formData.thumbnail] : []}
-                        onChange={(urls) => setFormData({ ...formData, thumbnail: urls[0] || '' })}
-                        maxFiles={1}
+                        value={formData.images}
+                        onChange={(urls) => setFormData({ ...formData, images: urls })}
+                        maxFiles={2}
                     />
                 </div>
             </div>

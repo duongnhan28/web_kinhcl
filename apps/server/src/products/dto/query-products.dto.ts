@@ -6,9 +6,7 @@ export class QueryProductsDto {
     @IsString()
     brand?: string;
 
-    @IsOptional()
-    @IsString()
-    glassType?: string;
+
 
     @IsOptional()
     @IsString()

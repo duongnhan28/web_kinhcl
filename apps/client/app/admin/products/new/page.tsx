@@ -14,7 +14,7 @@ export default function NewProductPage() {
                         </Link>
                         <div>
                             <p className="text-xs font-bold uppercase tracking-[0.3em] text-slate-400 mb-1">Hệ thống quản trị</p>
-                            <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">Thêm mới</h1>
+                            <h1 className="text-4xl font-normal text-slate-900 tracking-tight">Thêm mới</h1>
                         </div>
                     </div>
 

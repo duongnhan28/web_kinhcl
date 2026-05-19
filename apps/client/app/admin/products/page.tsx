@@ -11,6 +11,8 @@ export default function AdminProductsPage() {
     const token = useAuthStore((state) => state.token);
     const setToken = useAuthStore((state) => state.setToken);
     const [search, setSearch] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
         if (!token) {
@@ -19,11 +21,28 @@ export default function AdminProductsPage() {
         }
     }, [token, setToken]);
 
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedSearch(search);
+        }, 300);
+        return () => clearTimeout(handler);
+    }, [search]);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [debouncedSearch]);
+
     const { data, isLoading, refetch } = useQuery({
-        queryKey: ['admin-products', search],
+        queryKey: ['admin-products', debouncedSearch, currentPage],
         queryFn: async () => {
-            const response = await apiClient.get('/products?page=1&pageSize=100');
-            return response.data.data.items;
+            const response = await apiClient.get('/products', {
+                params: {
+                    page: currentPage,
+                    pageSize: 30,
+                    search: debouncedSearch.trim() || undefined
+                }
+            });
+            return response.data.data;
         }
     });
 
@@ -42,10 +61,9 @@ export default function AdminProductsPage() {
         }
     };
 
-    const products = data?.filter((item: any) =>
-        item.sku?.toLowerCase().includes(search.toLowerCase()) ||
-        item.name.toLowerCase().includes(search.toLowerCase())
-    ) ?? [];
+    const products = data?.items ?? [];
+    const total = data?.total ?? 0;
+    const totalPages = Math.ceil(total / 30);
 
     return (
         <AdminShell>
@@ -54,7 +72,7 @@ export default function AdminProductsPage() {
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div>
                             <p className="text-xs font-bold uppercase tracking-[0.3em] text-slate-400 mb-1">Hệ thống quản trị</p>
-                            <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">Kính cường lực</h1>
+                            <h1 className="text-4xl font-normal text-slate-900 tracking-tight">Kính cường lực</h1>
                         </div>
                         <div className="flex items-center gap-3">
                             <Link href="/admin/products/new" className="rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800">
@@ -71,6 +89,7 @@ export default function AdminProductsPage() {
                         <table className="min-w-full divide-y divide-slate-200 text-left text-sm">
                             <thead className="bg-slate-50 text-slate-700">
                                 <tr>
+                                    <th className="px-6 py-4 w-20 text-center">STT</th>
                                     <th className="px-6 py-4">Mã SKU</th>
                                     <th className="px-6 py-4 text-right">Hành động</th>
                                 </tr>
@@ -78,13 +97,16 @@ export default function AdminProductsPage() {
                             <tbody className="divide-y divide-slate-200 bg-white">
                                 {isLoading ? (
                                     <tr>
-                                        <td colSpan={5} className="px-6 py-10 text-center text-slate-500">
+                                        <td colSpan={6} className="px-6 py-10 text-center text-slate-500">
                                             Đang tải...
                                         </td>
                                     </tr>
                                 ) : products.length ? (
-                                    products.map((product: any) => (
+                                    products.map((product: any, index: number) => (
                                         <tr key={product.id} className="hover:bg-slate-50 transition-colors">
+                                            <td className="px-6 py-4 w-20 text-center font-semibold text-slate-500">
+                                                {(currentPage - 1) * 30 + index + 1}
+                                            </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
                                                     <div className="h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-slate-200">
@@ -102,7 +124,7 @@ export default function AdminProductsPage() {
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan={5} className="px-6 py-10 text-center text-slate-500">
+                                        <td colSpan={6} className="px-6 py-10 text-center text-slate-500">
                                             Không tìm thấy sản phẩm nào.
                                         </td>
                                     </tr>
@@ -110,6 +132,46 @@ export default function AdminProductsPage() {
                             </tbody>
                         </table>
                     </div>
+
+                    {/* Pagination Controls */}
+                    {total > 0 && (
+                        <div className="mt-6 flex flex-col items-center justify-between gap-4 border-t border-slate-200 pt-6 sm:flex-row">
+                            <div className="text-sm text-slate-500">
+                                Hiển thị <span className="font-semibold text-slate-900">{products.length}</span> trên tổng số <span className="font-semibold text-slate-900">{total}</span> sản phẩm (Trang {currentPage}/{totalPages})
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <button
+                                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                                    disabled={currentPage === 1}
+                                    className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 hover:border-slate-300 disabled:opacity-50 disabled:pointer-events-none"
+                                >
+                                    Trang trước
+                                </button>
+                                <div className="flex items-center gap-1">
+                                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                                        <button
+                                            key={p}
+                                            onClick={() => setCurrentPage(p)}
+                                            className={`h-8 w-8 rounded-full text-xs font-semibold transition ${
+                                                p === currentPage
+                                                    ? 'bg-slate-950 text-white'
+                                                    : 'text-slate-700 hover:bg-slate-100'
+                                            }`}
+                                        >
+                                            {p}
+                                        </button>
+                                    ))}
+                                </div>
+                                <button
+                                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                                    disabled={currentPage === totalPages}
+                                    className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 hover:border-slate-300 disabled:opacity-50 disabled:pointer-events-none"
+                                >
+                                    Trang sau
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </AdminShell>

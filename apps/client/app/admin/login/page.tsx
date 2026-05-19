@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { loginAdmin } from '../../../lib/api';
 import { useAuthStore } from '../../../hooks/useAuthStore';
 
@@ -44,9 +45,14 @@ export default function AdminLoginPage() {
                         <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Nhập mật khẩu" className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-slate-400" />
                     </div>
                     {error && <p className="text-sm text-red-600">{error}</p>}
-                    <button type="submit" disabled={loading} className="inline-flex w-full justify-center rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:opacity-50">
-                        {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
-                    </button>
+                    <div className="space-y-3 pt-2">
+                        <button type="submit" disabled={loading} className="inline-flex w-full justify-center rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:opacity-50">
+                            {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
+                        </button>
+                        <Link href="/" className="inline-flex w-full justify-center rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 hover:border-slate-300">
+                            Quay lại Website
+                        </Link>
+                    </div>
                 </form>
             </div>
         </div>

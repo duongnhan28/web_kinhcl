@@ -17,18 +17,8 @@ export class CreateProductDto {
     @IsNotEmpty()
     description: string;
 
-    @IsInt()
-    @Min(0)
-    price: number;
 
 
-    @IsString()
-    @IsNotEmpty()
-    glassType: string;
-
-    @IsInt()
-    @Min(0)
-    stock: number;
 
 
     @IsString()
