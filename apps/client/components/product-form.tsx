@@ -79,7 +79,22 @@ export function ProductForm({ initialData, isEdit }: ProductFormProps) {
             console.error(error);
             const serverMessage = error.response?.data?.message;
             if (serverMessage) {
-                alert(serverMessage);
+                if (typeof serverMessage === 'string') {
+                    alert(serverMessage);
+                } else if (Array.isArray(serverMessage)) {
+                    alert(serverMessage.join('\n'));
+                } else if (typeof serverMessage === 'object' && serverMessage !== null) {
+                    const msg = (serverMessage as any).message || (serverMessage as any).error;
+                    if (Array.isArray(msg)) {
+                        alert(msg.join('\n'));
+                    } else if (typeof msg === 'string') {
+                        alert(msg);
+                    } else {
+                        alert(JSON.stringify(serverMessage));
+                    }
+                } else {
+                    alert(JSON.stringify(serverMessage));
+                }
             } else {
                 alert('Có lỗi xảy ra khi lưu sản phẩm!');
             }
