@@ -4,22 +4,14 @@ export function Footer() {
     return (
         <footer className="border-t border-slate-200 bg-slate-50 py-10">
             <div className="mx-auto flex max-w-7xl flex-col gap-8 px-6 sm:px-8 lg:flex-row lg:items-start lg:justify-between">
-                <div className="max-w-xl space-y-4">
-                    <p className="text-xl font-bold text-slate-950 uppercase">Công ty TNHH MHP Group</p>
-                    <a 
-                        href="https://www.google.com/maps/search/?api=1&query=L7-67+KĐT+Đại+Kim,+P.Định+Công,+TP+Hà+Nội" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-sm text-slate-600 hover:text-orange-600 transition flex items-start gap-1"
-                    >
-                        Địa chỉ: L7-67 KĐT Đại Kim, P.Định Công, TP Hà Nội
-                    </a>
+                <div className="max-w-xl flex items-center gap-3">
+                    <img src="/logo.jpg" alt="Oufeidun Logo" className="h-10 w-auto rounded-lg shadow-sm" />
+                    <p className="text-xl font-bold text-slate-950 uppercase">Oufeidun</p>
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     <div>
                         <p className="mb-3 font-semibold text-slate-900">Liên hệ</p>
                         <p className="text-sm text-slate-600">Email: Mhpgroup.marketing@gmail.com</p>
-                        <p className="text-sm text-slate-600">Điện thoại: 036 2624 126</p>
                     </div>
                     <div>
                         <p className="mb-3 font-semibold text-slate-900">Khám phá</p>

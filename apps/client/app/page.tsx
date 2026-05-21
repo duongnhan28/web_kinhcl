@@ -64,7 +64,7 @@ export default function HomePage() {
                     {/* Left Column: Ads Banner (Hidden on Mobile, spans 2 cols on Large) */}
                     <div className="hidden lg:block lg:col-span-3 space-y-6 sticky top-24">
                         <div className="rounded-3xl overflow-hidden shadow-md border border-slate-200 bg-white">
-                            <img src="/banner.jpg" alt="Quảng cáo MHP Group" className="w-full h-auto object-cover" />
+                            <img src="/banner.jpg" alt="Quảng cáo Oufeidun" className="w-full h-auto object-cover" />
                         </div>
                     </div>
 
@@ -181,7 +181,7 @@ export default function HomePage() {
                     {/* Right Column: Ads Banner (Hidden on Mobile, spans 2 cols on Large) */}
                     <div className="hidden lg:block lg:col-span-3 space-y-6 sticky top-24">
                         <div className="rounded-3xl overflow-hidden shadow-md border border-slate-200 bg-white">
-                            <img src="/banner.jpg" alt="Quảng cáo MHP Group" className="w-full h-auto object-cover" />
+                            <img src="/banner.jpg" alt="Quảng cáo Oufeidun" className="w-full h-auto object-cover" />
                         </div>
                     </div>
 
