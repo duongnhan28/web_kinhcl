@@ -11,7 +11,7 @@ export function Footer() {
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     <div>
                         <p className="mb-3 font-semibold text-slate-900">Liên hệ</p>
-                        <p className="text-sm text-slate-600">Email: Mhpgroup.marketing@gmail.com</p>
+                        <p className="text-sm text-slate-600">Email: Mhpgroup2078@gmail.com</p>
                     </div>
                     <div>
                         <p className="mb-3 font-semibold text-slate-900">Khám phá</p>
