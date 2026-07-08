@@ -12,6 +12,7 @@ export function Footer() {
                     <div>
                         <p className="mb-3 font-semibold text-slate-900">Liên hệ</p>
                         <p className="text-sm text-slate-600">Email: Mhpgroup2078@gmail.com</p>
+                        <p className="text-sm text-slate-600">Điện thoại: 036 2624126</p>
                     </div>
                     <div>
                         <p className="mb-3 font-semibold text-slate-900">Khám phá</p>
