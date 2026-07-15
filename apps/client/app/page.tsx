@@ -230,18 +230,18 @@ export default function HomePage() {
                         type="button"
                         onClick={() => setSelectedImage(null)}
                         aria-label="Đóng ảnh"
-                        className="absolute right-4 top-4 md:right-6 md:top-6 inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-slate-900 shadow-lg transition hover:bg-orange-50 focus:outline-none focus:ring-4 focus:ring-orange-200"
+                        className="absolute right-4 top-4 md:right-6 md:top-6 inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-slate-900 shadow-lg transition hover:bg-orange-50 focus:outline-none focus:ring-4 focus:ring-orange-200"
                     >
                         <X className="h-6 w-6" />
                     </button>
                     <div
-                        className="max-h-[88vh] w-full max-w-5xl rounded-2xl bg-white p-3 shadow-2xl md:p-4"
+                        className="inline-flex max-h-[88vh] max-w-[min(94vw,1100px)] rounded-2xl bg-slate-900/95 p-2 shadow-2xl ring-1 ring-white/10 md:p-3"
                         onClick={(event) => event.stopPropagation()}
                     >
                         <img
                             src={selectedImage.src}
                             alt={selectedImage.alt}
-                            className="mx-auto max-h-[80vh] max-w-full rounded-xl object-contain"
+                            className="max-h-[84vh] max-w-full rounded-xl object-contain"
                         />
                     </div>
                 </div>
