@@ -5,8 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '../lib/api';
 import { Header } from '../components/header';
 import { Footer } from '../components/footer';
-import { Search, Check, Smartphone, Box } from 'lucide-react';
-import Link from 'next/link';
+import { Search, Check, Box, X } from 'lucide-react';
 
 // Helper: highlight phần text khớp với keyword
 function HighlightText({ text, keyword }: { text: string; keyword: string }) {
@@ -29,6 +28,7 @@ function HighlightText({ text, keyword }: { text: string; keyword: string }) {
 export default function HomePage() {
     const [search, setSearch] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
+    const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string } | null>(null);
 
     // Debounce search
     useEffect(() => {
@@ -37,6 +37,25 @@ export default function HomePage() {
         }, 300);
         return () => clearTimeout(handler);
     }, [search]);
+
+    useEffect(() => {
+        if (!selectedImage) return;
+
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                setSelectedImage(null);
+            }
+        };
+
+        const previousOverflow = document.body.style.overflow;
+        window.addEventListener('keydown', handleKeyDown);
+        document.body.style.overflow = 'hidden';
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+            document.body.style.overflow = previousOverflow;
+        };
+    }, [selectedImage]);
 
     const { data, isLoading } = useQuery({
         queryKey: ['products-search', debouncedSearch],
@@ -127,14 +146,25 @@ export default function HomePage() {
                                                 <div className="flex gap-3">
                                                     {product.images && product.images.length > 0 ? (
                                                         product.images.map((img: any, idx: number) => (
-                                                            <div key={img.id || idx} className="w-24 h-24 md:w-28 md:h-28 rounded-2xl bg-slate-100 overflow-hidden border border-slate-200 relative shadow-sm hover:scale-105 transition-transform duration-200">
+                                                            <button
+                                                                key={img.id || idx}
+                                                                type="button"
+                                                                onClick={() => setSelectedImage({ src: img.imageUrl, alt: `Bao bì ${idx + 1}` })}
+                                                                aria-label={`Xem ảnh bao bì ${idx + 1}`}
+                                                                className="w-24 h-24 md:w-28 md:h-28 rounded-2xl bg-slate-100 overflow-hidden border border-slate-200 relative shadow-sm hover:scale-105 focus:outline-none focus:ring-4 focus:ring-orange-100 focus:border-orange-400 transition-transform duration-200 cursor-zoom-in"
+                                                            >
                                                                 <img src={img.imageUrl} alt={`Bao bì ${idx + 1}`} className="w-full h-full object-cover" />
-                                                            </div>
+                                                            </button>
                                                         ))
                                                     ) : product.thumbnail ? (
-                                                        <div className="w-32 h-32 md:w-40 md:h-40 rounded-2xl bg-slate-100 overflow-hidden border border-slate-200 relative shadow-sm">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setSelectedImage({ src: product.thumbnail, alt: 'Bao bì' })}
+                                                            aria-label="Xem ảnh bao bì"
+                                                            className="w-32 h-32 md:w-40 md:h-40 rounded-2xl bg-slate-100 overflow-hidden border border-slate-200 relative shadow-sm hover:scale-105 focus:outline-none focus:ring-4 focus:ring-orange-100 focus:border-orange-400 transition-transform duration-200 cursor-zoom-in"
+                                                        >
                                                             <img src={product.thumbnail} alt="Bao bì" className="w-full h-full object-cover" />
-                                                        </div>
+                                                        </button>
                                                     ) : (
                                                         <div className="w-32 h-32 md:w-40 md:h-40 rounded-2xl bg-slate-100 overflow-hidden border border-slate-200 flex items-center justify-center text-slate-400 shadow-sm">
                                                             <Box className="w-8 h-8" />
@@ -187,7 +217,36 @@ export default function HomePage() {
 
                 </div>
             </main>
-            
+
+            {selectedImage && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 md:p-8"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="Xem ảnh bao bì"
+                    onClick={() => setSelectedImage(null)}
+                >
+                    <button
+                        type="button"
+                        onClick={() => setSelectedImage(null)}
+                        aria-label="Đóng ảnh"
+                        className="absolute right-4 top-4 md:right-6 md:top-6 inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-slate-900 shadow-lg transition hover:bg-orange-50 focus:outline-none focus:ring-4 focus:ring-orange-200"
+                    >
+                        <X className="h-6 w-6" />
+                    </button>
+                    <div
+                        className="max-h-[88vh] w-full max-w-5xl rounded-2xl bg-white p-3 shadow-2xl md:p-4"
+                        onClick={(event) => event.stopPropagation()}
+                    >
+                        <img
+                            src={selectedImage.src}
+                            alt={selectedImage.alt}
+                            className="mx-auto max-h-[80vh] max-w-full rounded-xl object-contain"
+                        />
+                    </div>
+                </div>
+            )}
+
             <Footer />
         </div>
     );
